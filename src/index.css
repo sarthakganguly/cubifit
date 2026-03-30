@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--bg-color);
+  --color-surface: var(--surface-color);
+  --color-primary: var(--primary-color);
+  --color-secondary: var(--secondary-color);
+  --color-accent: var(--accent-color);
+  --color-cta: var(--cta-color);
+  --color-text-primary: var(--text-primary-color);
+  --color-text-secondary: var(--text-secondary-color);
+  --color-border: var(--border-color);
+  --color-success: var(--success-color);
+  --color-warning: var(--warning-color);
+  --color-error: var(--error-color);
+  --shadow-sm: 0 1px calc(var(--shadow-blur) * 0.2) color-mix(in srgb, var(--shadow-color) calc(var(--shadow-intensity) * 100%), transparent);
+  --shadow-md: 0 4px calc(var(--shadow-blur) * 0.5) color-mix(in srgb, var(--shadow-color) calc(var(--shadow-intensity) * 100%), transparent);
+  --shadow-lg: 0 10px var(--shadow-blur) color-mix(in srgb, var(--shadow-color) calc(var(--shadow-intensity) * 100%), transparent);
+  --shadow-xl: 0 20px calc(var(--shadow-blur) * 1.5) color-mix(in srgb, var(--shadow-color) calc(var(--shadow-intensity) * 100%), transparent);
+  --shadow-2xl: 0 25px calc(var(--shadow-blur) * 2) color-mix(in srgb, var(--shadow-color) calc(var(--shadow-intensity) * 100%), transparent);
+}
+
+@layer base {
+  :root {
+    --bg-color: #F8FAFC;
+    --surface-color: #FFFFFF;
+    --primary-color: #2563EB;
+    --secondary-color: #16A34A;
+    --accent-color: #F59E0B;
+    --cta-color: #DC2626;
+    --text-primary-color: #0F172A;
+    --text-secondary-color: #475569;
+    --border-color: #E2E8F0;
+    --success-color: #16A34A;
+    --warning-color: #F59E0B;
+    --error-color: #DC2626;
+    --shadow-color: #000000;
+    --shadow-blur: 12px;
+    --shadow-intensity: 0.15;
+  }
+
+  .dark {
+    --bg-color: #0F172A;
+    --surface-color: #1E293B;
+    --primary-color: #38BDF8;
+    --secondary-color: #22C55E;
+    --accent-color: #F97316;
+    --cta-color: #EF4444;
+    --text-primary-color: #E2E8F0;
+    --text-secondary-color: #94A3B8;
+    --border-color: #334155;
+    --success-color: #22C55E;
+    --warning-color: #FACC15;
+    --error-color: #EF4444;
+    --shadow-color: #38BDF8;
+    --shadow-blur: 20px;
+    --shadow-intensity: 0.25;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

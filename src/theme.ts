@@ -1,0 +1,57 @@
+export const DEFAULT_THEME = {
+  light: {
+    "--bg-color": "#F8FAFC",
+    "--surface-color": "#FFFFFF",
+    "--primary-color": "#2563EB",
+    "--secondary-color": "#16A34A",
+    "--accent-color": "#F59E0B",
+    "--cta-color": "#DC2626",
+    "--text-primary-color": "#0F172A",
+    "--text-secondary-color": "#475569",
+    "--border-color": "#E2E8F0",
+    "--success-color": "#16A34A",
+    "--warning-color": "#F59E0B",
+    "--error-color": "#DC2626",
+    "--shadow-color": "#000000",
+    "--shadow-blur": "12px",
+    "--shadow-intensity": "0.15",
+  },
+  dark: {
+    "--bg-color": "#0F172A",
+    "--surface-color": "#1E293B",
+    "--primary-color": "#38BDF8",
+    "--secondary-color": "#22C55E",
+    "--accent-color": "#F97316",
+    "--cta-color": "#EF4444",
+    "--text-primary-color": "#E2E8F0",
+    "--text-secondary-color": "#94A3B8",
+    "--border-color": "#334155",
+    "--success-color": "#22C55E",
+    "--warning-color": "#FACC15",
+    "--error-color": "#EF4444",
+    "--shadow-color": "#38BDF8",
+    "--shadow-blur": "20px",
+    "--shadow-intensity": "0.25",
+  },
+};
+
+export const COLOR_LABELS: Record<string, string> = {
+  "--bg-color": "Background",
+  "--surface-color": "Surface",
+  "--primary-color": "Primary",
+  "--secondary-color": "Secondary",
+  "--accent-color": "Accent",
+  "--cta-color": "CTA",
+  "--text-primary-color": "Text Primary",
+  "--text-secondary-color": "Text Secondary",
+  "--border-color": "Border",
+  "--success-color": "Success",
+  "--warning-color": "Warning",
+  "--error-color": "Error",
+};
+
+export const SHADOW_LABELS: Record<string, string> = {
+  "--shadow-color": "Shadow Color",
+  "--shadow-blur": "Shadow Blur",
+  "--shadow-intensity": "Shadow Intensity",
+};

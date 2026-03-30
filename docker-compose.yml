@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  deskfit-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: deskfit-dev
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount the current directory to /app in the container
+      # This allows you to copy files to the Thinkpad and see changes immediately
+      - .:/app
+      # Prevent local node_modules from overwriting the container's node_modules
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      # Use polling for file watching, which is more reliable when syncing files
+      # over network shares or using tools like rsync/scp
+      - CHOKIDAR_USEPOLLING=true
+    restart: unless-stopped
+
+  # Uncomment the below service to run the production build instead
+  # deskfit-prod:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: deskfit-prod
+  #   ports:
+  #     - "80:80"
+  #   restart: unless-stopped
