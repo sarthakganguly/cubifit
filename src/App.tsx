@@ -10,6 +10,9 @@ import HistoryScreen from "./components/HistoryScreen";
 import SettingsScreen from "./components/SettingsScreen";
 import HomeScreen from "./components/HomeScreen";
 import WizardScreen from "./components/WizardScreen";
+import AuthScreen from "./components/AuthScreen";
+import PremiumLockoutScreen from "./components/PremiumLockoutScreen";
+import { LogOut } from "lucide-react";
 
 type View =
   | "home"
@@ -20,11 +23,15 @@ type View =
   | "history"
   | "settings";
 
+const TRIAL_DAYS = 7;
+
 export default function App() {
   const { t } = useTranslation();
   const theme = useAppStore((state) => state.theme);
   const customColors = useAppStore((state) => state.customColors);
   const queue = useAppStore((state) => state.queue);
+  const user = useAppStore((state) => state.user);
+  const logout = useAppStore((state) => state.logout);
   const [currentView, setCurrentView] = useState<View>("home");
 
   useEffect(() => {
@@ -64,10 +71,33 @@ export default function App() {
     }
   }, [theme, customColors]);
 
+  if (!user) {
+    return <AuthScreen />;
+  }
+
+  const isTrialExpired = () => {
+    if (user.isPremium) return false;
+    const now = Date.now();
+    const trialEnd = user.trialStartDate + TRIAL_DAYS * 24 * 60 * 60 * 1000;
+    return now > trialEnd;
+  };
+
+  if (isTrialExpired()) {
+    return <PremiumLockoutScreen />;
+  }
+
   return (
     <div className="min-h-screen bg-background text-text-primary flex flex-col font-sans transition-colors duration-200">
       <header className="bg-surface shadow-sm px-4 flex justify-between items-center sticky top-0 z-10 h-16">
-        <div className="w-10"></div> {/* Spacer for balance */}
+        <div className="flex items-center">
+          <button
+            onClick={() => logout()}
+            className="flex items-center gap-2 px-3 py-1.5 bg-error/10 text-error border border-error/20 rounded-lg hover:bg-error hover:text-white transition-all text-sm font-semibold shadow-sm active:scale-95"
+          >
+            <LogOut size={16} />
+            <span className="hidden sm:inline">Logout</span>
+          </button>
+        </div>
         <div className="flex items-center gap-3 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <img
             src="https://picsum.photos/seed/cubefit/64/64"

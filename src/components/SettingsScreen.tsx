@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "../store";
-import { Moon, Sun, Download, Upload, Database, Type, Palette, RotateCcw } from "lucide-react";
+import { Moon, Sun, Download, Upload, Database, Type, Palette, RotateCcw, Trash2, ShieldOff } from "lucide-react";
 import { db } from "../db";
 import { cn } from "../lib/utils";
 import { DEFAULT_THEME, COLOR_LABELS, SHADOW_LABELS } from "../theme";
@@ -14,6 +14,26 @@ export default function SettingsScreen() {
   const customColors = useAppStore((state) => state.customColors);
   const setCustomColor = useAppStore((state) => state.setCustomColor);
   const resetCustomColors = useAppStore((state) => state.resetCustomColors);
+  const user = useAppStore((state) => state.user);
+  const setPremium = useAppStore((state) => state.setPremium);
+
+  const handleResetPremium = async () => {
+    if (!user) return;
+    try {
+      const dbUser = await db.users.where("username").equals(user.username).first();
+      if (dbUser) {
+        await db.users.update(dbUser.id!, {
+          is_premium: false,
+          license_key: undefined,
+        });
+        setPremium(false);
+        alert("Premium status reset! You can now retest the activation flow.");
+      }
+    } catch (err) {
+      console.error("Failed to reset premium", err);
+      alert("Failed to reset premium status.");
+    }
+  };
 
   const handleExport = async () => {
     try {
@@ -258,6 +278,15 @@ export default function SettingsScreen() {
               <div className="flex items-center gap-3">
                 <Upload size={20} className="text-text-secondary" />
                 <span className="font-medium">Import Data</span>
+              </div>
+            </button>
+            <button
+              onClick={handleResetPremium}
+              className="w-full flex items-center justify-between p-3 bg-error/5 rounded-xl hover:bg-error/10 transition-colors border border-error/10"
+            >
+              <div className="flex items-center gap-3">
+                <ShieldOff size={20} className="text-error" />
+                <span className="font-medium text-error">Debug: Reset Premium Status</span>
               </div>
             </button>
           </div>

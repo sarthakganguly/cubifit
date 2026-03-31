@@ -49,6 +49,15 @@ export class MyDatabase extends Dexie {
   workout_lists!: Table<WorkoutList>;
   list_exercises!: Table<ListExercise>;
   workout_list_exercises!: Table<ListExercise>;
+  users!: Table<{
+    id?: number;
+    username: string;
+    password: string;
+    passkey: string;
+    created_at: number;
+    is_premium: boolean;
+    license_key?: string;
+  }>;
   workout_logs!: Table<{
     log_id?: number;
     list_name: string;
@@ -74,6 +83,9 @@ export class MyDatabase extends Dexie {
     });
     this.version(2).stores({
       workout_list_exercises: "++id, list_id, exercise_id, position",
+    });
+    this.version(3).stores({
+      users: "++id, &username, passkey",
     });
   }
 }

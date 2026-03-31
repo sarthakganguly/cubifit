@@ -26,6 +26,20 @@ interface AppState {
   clearQueue: () => void;
   draftName: string;
   setDraftName: (name: string) => void;
+  user: {
+    username: string;
+    isPremium: boolean;
+    trialStartDate: number;
+  } | null;
+  setUser: (
+    user: {
+      username: string;
+      isPremium: boolean;
+      trialStartDate: number;
+    } | null,
+  ) => void;
+  setPremium: (isPremium: boolean) => void;
+  logout: () => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -74,6 +88,13 @@ export const useAppStore = create<AppState>()(
       clearQueue: () => set({ queue: [], draftName: "" }),
       draftName: "",
       setDraftName: (name) => set({ draftName: name }),
+      user: null,
+      setUser: (user) => set({ user }),
+      setPremium: (isPremium) =>
+        set((state) => ({
+          user: state.user ? { ...state.user, isPremium } : null,
+        })),
+      logout: () => set({ user: null, queue: [], draftName: "" }),
     }),
     {
       name: "deskfit-storage",
