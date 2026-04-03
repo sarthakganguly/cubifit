@@ -21,6 +21,8 @@ export interface Exercise {
   tools: string;
   video_link: string;
   image_url: string;
+  video_link: string | Blob; 
+  image_url: string | Blob;
 }
 
 export interface WorkoutList {

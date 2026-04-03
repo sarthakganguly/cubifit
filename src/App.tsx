@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useAppStore } from "./store";
-import { Home, List, Play, History, Settings } from "lucide-react";
+import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
+import { useUIStore, useWorkoutStore, useAuthStore } from "./store";
+import { Home, List, Play, History, Settings, LogOut } from "lucide-react";
 import { cn } from "./lib/utils";
+
 import SelectionScreen from "./components/SelectionScreen";
 import QueueScreen from "./components/QueueScreen";
 import WorkoutScreen from "./components/WorkoutScreen";
@@ -12,27 +14,17 @@ import HomeScreen from "./components/HomeScreen";
 import WizardScreen from "./components/WizardScreen";
 import AuthScreen from "./components/AuthScreen";
 import PremiumLockoutScreen from "./components/PremiumLockoutScreen";
-import { LogOut } from "lucide-react";
-
-type View =
-  | "home"
-  | "library"
-  | "wizard"
-  | "queue"
-  | "workout"
-  | "history"
-  | "settings";
 
 const TRIAL_DAYS = 7;
 
 export default function App() {
   const { t } = useTranslation();
-  const theme = useAppStore((state) => state.theme);
-  const customColors = useAppStore((state) => state.customColors);
-  const queue = useAppStore((state) => state.queue);
-  const user = useAppStore((state) => state.user);
-  const logout = useAppStore((state) => state.logout);
-  const [currentView, setCurrentView] = useState<View>("home");
+  const { theme, customColors } = useUIStore();
+  const { queue } = useWorkoutStore();
+  const { user, logout } = useAuthStore();
+  
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const root = document.documentElement;
@@ -42,27 +34,14 @@ export default function App() {
       root.classList.remove("dark");
     }
 
-    // Clear existing inline custom colors
     const colorKeys = [
-      "--bg-color",
-      "--surface-color",
-      "--primary-color",
-      "--secondary-color",
-      "--accent-color",
-      "--cta-color",
-      "--text-primary-color",
-      "--text-secondary-color",
-      "--border-color",
-      "--success-color",
-      "--warning-color",
-      "--error-color",
-      "--shadow-color",
-      "--shadow-blur",
-      "--shadow-intensity",
+      "--bg-color", "--surface-color", "--primary-color", "--secondary-color",
+      "--accent-color", "--cta-color", "--text-primary-color", "--text-secondary-color",
+      "--border-color", "--success-color", "--warning-color", "--error-color",
+      "--shadow-color", "--shadow-blur", "--shadow-intensity",
     ];
     colorKeys.forEach((key) => root.style.removeProperty(key));
 
-    // Apply custom colors for the current theme
     const currentCustomColors = customColors[theme];
     if (currentCustomColors) {
       Object.entries(currentCustomColors).forEach(([key, value]) => {
@@ -86,12 +65,18 @@ export default function App() {
     return <PremiumLockoutScreen />;
   }
 
+  // Hide bottom nav during an active workout
+  const isWorkoutActive = location.pathname === "/workout";
+
   return (
     <div className="min-h-screen bg-background text-text-primary flex flex-col font-sans transition-colors duration-200">
       <header className="bg-surface shadow-sm px-4 flex justify-between items-center sticky top-0 z-10 h-16">
         <div className="flex items-center">
           <button
-            onClick={() => logout()}
+            onClick={() => {
+              logout();
+              navigate("/");
+            }}
             className="flex items-center gap-2 px-3 py-1.5 bg-error/10 text-error border border-error/20 rounded-lg hover:bg-error hover:text-white transition-all text-sm font-semibold shadow-sm active:scale-95"
           >
             <LogOut size={16} />
@@ -108,9 +93,9 @@ export default function App() {
           <h1 className="text-xl font-bold text-primary">{t("app.title")}</h1>
         </div>
         <div className="w-10 flex justify-end">
-          {queue.length > 0 && currentView !== "workout" && (
+          {queue.length > 0 && !isWorkoutActive && (
             <button
-              onClick={() => setCurrentView("queue")}
+              onClick={() => navigate("/queue")}
               className="relative p-2 text-text-secondary hover:text-primary transition-colors"
             >
               <List size={24} />
@@ -123,58 +108,39 @@ export default function App() {
       </header>
 
       <main className="flex-1 overflow-y-auto p-4 max-w-3xl mx-auto w-full flex flex-col">
-        {currentView === "home" && (
-          <HomeScreen
-            onGoToLibrary={() => setCurrentView("library")}
-            onGoToWizard={() => setCurrentView("wizard")}
-            onGoToQueue={() => setCurrentView("queue")}
-          />
-        )}
-        {currentView === "library" && (
-          <SelectionScreen onBack={() => setCurrentView("home")} />
-        )}
-        {currentView === "wizard" && (
-          <WizardScreen
-            onBack={() => setCurrentView("home")}
-            onComplete={() => setCurrentView("queue")}
-          />
-        )}
-        {currentView === "queue" && (
-          <QueueScreen
-            onStart={() => setCurrentView("workout")}
-            onAddMore={() => setCurrentView("library")}
-            onSave={() => setCurrentView("home")}
-          />
-        )}
-        {currentView === "workout" && (
-          <WorkoutScreen
-            onComplete={() => setCurrentView("history")}
-            onCancel={() => setCurrentView("home")}
-          />
-        )}
-        {currentView === "history" && <HistoryScreen />}
-        {currentView === "settings" && <SettingsScreen />}
+        <Routes>
+          <Route path="/" element={<HomeScreen />} />
+          <Route path="/library" element={<SelectionScreen />} />
+          <Route path="/wizard" element={<WizardScreen />} />
+          <Route path="/queue" element={<QueueScreen />} />
+          <Route path="/workout" element={<WorkoutScreen />} />
+          <Route path="/history" element={<HistoryScreen />} />
+          <Route path="/settings" element={<SettingsScreen />} />
+          
+          {/* Fallback route: redirects any unknown URL back to Home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
 
-      {currentView !== "workout" && (
+      {!isWorkoutActive && (
         <nav className="bg-surface border-t border-border flex justify-around p-3 pb-6 sticky bottom-0 z-10">
           <NavItem
             icon={<Home />}
             label="Home"
-            active={currentView === "home"}
-            onClick={() => setCurrentView("home")}
+            active={location.pathname === "/"}
+            onClick={() => navigate("/")}
           />
           <NavItem
             icon={<History />}
             label="History"
-            active={currentView === "history"}
-            onClick={() => setCurrentView("history")}
+            active={location.pathname === "/history"}
+            onClick={() => navigate("/history")}
           />
           <NavItem
             icon={<Settings />}
             label="Settings"
-            active={currentView === "settings"}
-            onClick={() => setCurrentView("settings")}
+            active={location.pathname === "/settings"}
+            onClick={() => navigate("/settings")}
           />
         </nav>
       )}
