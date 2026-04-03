@@ -1,153 +1,69 @@
-CubiFit 🏋️‍♂️
-==============
+# Cubifit 🏋️‍♂️
 
-CubiFit is a modern, responsive frontend web application designed for fitness tracking, workout management, and exercise queuing. Built with a robust React and TypeScript architecture, it offers a seamless local-first experience with multi-language support and an integrated premium feature system.
+Cubifit is a professional, privacy-first fitness application designed for high performance and local-centric data management. Built with a modern tech stack, it prioritizes user privacy, offline functionality, and a fluid user experience through rich animations.
 
-✨ Features
-----------
+## 🌟 Key Features
 
--   **Personalized Workouts:** Intuitive workout selection, queuing, and tracking screens (`WorkoutScreen`, `QueueScreen`).
+- **Privacy-First Architecture**: No cloud syncing or external data storage. All your workout data stays on your device using Dexie.js (IndexedDB).
+- **Offline-First**: Fully functional without an internet connection. Perfect for gym environments with poor connectivity.
+- **Fluid Animations**: High-performance transitions and feedback powered by `motion` for a premium, 60fps feel.
+- **Queue-Based Selection**: Browse exercise cards and build your workout draft dynamically.
+- **Localization**: Full multi-language support via `i18next`.
+- **Responsive Design**: Optimized for both mobile and desktop browsers using Tailwind CSS.
 
--   **History & Analytics:** Track your past workouts and fitness journey (`HistoryScreen`).
+## 🛠 Tech Stack
 
--   **Local-First Architecture:** Fast, reliable data storage using a local database layer (`db.ts`).
+- **Framework**: [React 19](https://react.dev/) with [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **State Management**: [Zustand](https://github.com/pmndrs/zustand)
+- **Local Database**: [Dexie.js](https://dexie.org/)
+- **Animations**: [Motion](https://motion.dev/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Localization**: [i18next](https://www.i18next.com/)
 
--   **Internationalization (i18n):** Multi-language support out-of-the-box (`en.json` included).
-
--   **Premium Tier Ready:** Built-in screens for premium lockouts and feature gating (`PremiumLockoutScreen`).
-
--   **User Onboarding:** Step-by-step wizard for new users to set up their profiles (`WizardScreen`).
-
--   **Dockerized:** Developer-friendly containerization for rapid local development and production-ready Nginx serving.
-
-🛠 Tech Stack
--------------
-
--   **Core:** [React](https://www.google.com/search?q=https://reactjs.org/ "null") + [TypeScript](https://www.google.com/search?q=https://www.typescriptlang.org/ "null")
-
--   **Build Tool:** [Vite](https://vitejs.dev/ "null")
-
--   **State Management:** Custom Store (`store.ts`)
-
--   **Database:** Local DB wrapper (`db.ts` / IndexedDB)
-
--   **i18n:** `i18next` (`i18n.ts`)
-
--   **Infrastructure:** Docker, Docker Compose, Nginx
-
-📂 Project Structure
---------------------
-
-```
-cubifit/
-├── src/
-│   ├── components/      # React UI Components (Auth, Home, Workouts, etc.)
-│   ├── locales/         # i18n language files (e.g., en.json)
-│   ├── lib/             # Utility functions
-│   ├── App.tsx          # Main Application component
-│   ├── main.tsx         # React entry point
-│   ├── store.ts         # Global state management
-│   ├── db.ts            # Local database configuration
-│   ├── theme.ts         # Application theme definitions
-│   └── i18n.ts          # Internationalization setup
-├── tempdocs/            # Project documentation (PRD, Docker setup, etc.)
-├── Dockerfile.dev       # Docker configuration for development
-├── docker-compose.yml   # Multi-container Docker setup
-├── nginx.conf           # Nginx configuration for production
-└── package.json         # Project dependencies and scripts
-
-```
-
-🚀 Getting Started
-------------------
+## 🚀 Getting Started
 
 ### Prerequisites
 
-Ensure you have the following installed on your local machine:
+- [Node.js](https://nodejs.org/) (v18 or later)
+- npm or yarn
 
--   [Node.js](https://nodejs.org/ "null") (v18 or higher recommended)
+### Installation
 
--   [npm](https://www.google.com/search?q=https://www.npmjs.com/ "null") or [yarn](https://www.google.com/search?q=https://yarnpkg.com/ "null")
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd cubifit
+   ```
 
--   [Docker](https://www.google.com/search?q=https://www.docker.com/ "null") (Optional, for containerized environments)
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-### Local Development (Without Docker)
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-1.  **Clone the repository:**
+The application will be available at `http://localhost:3000`.
 
-    ```
-    git clone [https://github.com/sarthakganguly/cubifit.git](https://github.com/sarthakganguly/cubifit.git)
-    cd cubifit
+## 📂 Project Structure
 
-    ```
+- `src/components/`: Reusable UI components.
+- `src/db.ts`: Dexie.js database configuration and schema.
+- `src/store.ts`: Zustand state management for application logic.
+- `src/i18n.ts`: Localization configuration.
+- `src/locales/`: Translation files for different languages.
+- `src/theme.ts`: Theme configuration and custom color palettes.
 
-2.  **Install dependencies:**
+## 📱 Roadmap
 
-    ```
-    npm install
+While the current version is a high-performance web application, the roadmap includes:
+- **Expo Migration**: Transitioning to a unified codebase for Android and iOS.
+- **Native Hardware Integration**: Utilizing camera for QR code scanning and haptics for timer feedback.
+- **Data Portability**: JSON Import/Export for device-to-device migration.
 
-    ```
+## 📄 License
 
-3.  **Set up Environment Variables:** Copy the example environment file and update variables if necessary.
-
-    ```
-    cp .env.example .env
-
-    ```
-
-4.  **Start the development server:**
-
-    ```
-    npm run dev
-
-    ```
-
-    The application will be available at `http://localhost:5173`.
-
-### 🐳 Docker Development
-
-To run the application inside a Docker container (useful for standardized environments):
-
-1.  **Build and start the container:**
-
-    ```
-    docker-compose up --build
-
-    ```
-
-2.  **Access the application:** Open your browser and navigate to `http://localhost:5173`.
-
-*(Note: Hot-reloading is configured to work out-of-the-box with `Dockerfile.dev`)*
-
-📖 Documentation
-----------------
-
-Additional project documentation can be found in the `/tempdocs` directory:
-
--   [Product Requirements Document (PRD)](https://www.google.com/search?q=./tempdocs/PRD.md "null")
-
--   [Docker Setup Guide](https://www.google.com/search?q=./tempdocs/dockersetup.md "null")
-
--   [Color Palette & Theming](https://www.google.com/search?q=./tempdocs/color.md "null")
-
--   [Refactor Planning](https://www.google.com/search?q=./tempdocs/refactor.md "null")
-
-🤝 Contributing
----------------
-
-1.  Fork the Project
-
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-
-3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-
-4.  Push to the Branch (`git push origin feature/AmazingFeature`)
-
-5.  Open a Pull Request
-
-📄 License
-----------
-
-This project is proprietary. All rights reserved.
-
-*Maintained by Sarthak Ganguly.*
+This project is private and for internal use only.

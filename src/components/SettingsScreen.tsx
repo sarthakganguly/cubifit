@@ -1,9 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "../store";
-import { Moon, Sun, Download, Upload, Database, Type, Palette, RotateCcw, Trash2, ShieldOff } from "lucide-react";
+import { Moon, Sun, Download, Upload, Database, Type, Palette, RotateCcw, Trash2, ShieldOff, Settings2 } from "lucide-react";
 import { db } from "../db";
 import { cn } from "../lib/utils";
 import { DEFAULT_THEME, COLOR_LABELS, SHADOW_LABELS } from "../theme";
+import MediaManager from "./MediaManager";
 
 export default function SettingsScreen() {
   const { t } = useTranslation();
@@ -16,6 +17,8 @@ export default function SettingsScreen() {
   const resetCustomColors = useAppStore((state) => state.resetCustomColors);
   const user = useAppStore((state) => state.user);
   const setPremium = useAppStore((state) => state.setPremium);
+  const advancedMode = useAppStore((state) => state.advancedMode);
+  const setAdvancedMode = useAppStore((state) => state.setAdvancedMode);
 
   const handleResetPremium = async () => {
     if (!user) return;
@@ -255,6 +258,22 @@ export default function SettingsScreen() {
               </div>
             </div>
           </div>
+          <div className="mt-6 pt-6 border-t border-border">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Settings2 size={20} className="text-primary" />
+                <span className="font-medium">Advanced Mode</span>
+              </div>
+              <button
+                onClick={() => setAdvancedMode(!advancedMode)}
+                className="w-14 h-8 bg-border rounded-full relative transition-colors focus:outline-none"
+              >
+                <div
+                  className={`absolute top-1 left-1 w-6 h-6 bg-surface rounded-full shadow-sm transition-transform ${advancedMode ? "translate-x-6 bg-primary" : "translate-x-0"}`}
+                ></div>
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="p-4">
@@ -296,6 +315,7 @@ export default function SettingsScreen() {
           </p>
         </div>
       </div>
+      {advancedMode && <MediaManager />}
     </div>
   );
 }

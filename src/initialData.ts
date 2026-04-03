@@ -66,8 +66,7 @@ export const INITIAL_DATA = {
       energy_type: "Neutral",
       tools: "Chair",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/1.jpg",
     },
     {
       exercise_id: 2,
@@ -87,8 +86,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "Chair",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/2.jpg",
     },
     {
       exercise_id: 3,
@@ -108,8 +106,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "Chair",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/3.jpg",
     },
     {
       exercise_id: 4,
@@ -129,8 +126,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "Chair",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/4.jpg",
     },
     {
       exercise_id: 5,
@@ -150,8 +146,7 @@ export const INITIAL_DATA = {
       energy_type: "Neutral",
       tools: "Chair",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/5.jpg",
     },
     {
       exercise_id: 6,
@@ -171,8 +166,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "Chair",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/6.jpg",
     },
     {
       exercise_id: 7,
@@ -192,8 +186,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "Chair",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/7.jpg",
     },
     {
       exercise_id: 8,
@@ -213,8 +206,7 @@ export const INITIAL_DATA = {
       energy_type: "Neutral",
       tools: "Chair",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/8.jpg",
     },
     {
       exercise_id: 9,
@@ -234,8 +226,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "Chair",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/9.jpg",
     },
     {
       exercise_id: 10,
@@ -255,8 +246,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "Chair",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/10.jpg",
     },
     {
       exercise_id: 11,
@@ -276,8 +266,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "Chair",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/11.jpg",
     },
     {
       exercise_id: 12,
@@ -297,8 +286,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "Chair",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/12.jpg",
     },
     {
       exercise_id: 13,
@@ -318,8 +306,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "Desk",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/13.jpg",
     },
     {
       exercise_id: 14,
@@ -339,8 +326,7 @@ export const INITIAL_DATA = {
       energy_type: "Neutral",
       tools: "Desk",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/14.jpg",
     },
     {
       exercise_id: 15,
@@ -360,8 +346,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "Desk",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/15.jpg",
     },
     {
       exercise_id: 16,
@@ -381,8 +366,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "Desk",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/16.jpg",
     },
     {
       exercise_id: 17,
@@ -402,8 +386,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "Desk",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/17.jpg",
     },
     {
       exercise_id: 18,
@@ -423,8 +406,7 @@ export const INITIAL_DATA = {
       energy_type: "Neutral",
       tools: "Desk",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/18.jpg",
     },
     {
       exercise_id: 19,
@@ -444,8 +426,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "Desk",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/19.jpg",
     },
     {
       exercise_id: 20,
@@ -465,8 +446,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "Desk",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/20.jpg",
     },
     {
       exercise_id: 21,
@@ -486,8 +466,7 @@ export const INITIAL_DATA = {
       energy_type: "Neutral",
       tools: "Desk",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/21.jpg",
     },
     {
       exercise_id: 22,
@@ -507,8 +486,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "Desk",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/22.jpg",
     },
     {
       exercise_id: 23,
@@ -528,8 +506,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "Desk",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/23.jpg",
     },
     {
       exercise_id: 24,
@@ -549,8 +526,7 @@ export const INITIAL_DATA = {
       energy_type: "Neutral",
       tools: "Desk",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/24.jpg",
     },
     {
       exercise_id: 25,
@@ -570,8 +546,7 @@ export const INITIAL_DATA = {
       energy_type: "Neutral",
       tools: "Wall",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/25.jpg",
     },
     {
       exercise_id: 26,
@@ -591,8 +566,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "Wall",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/26.jpg",
     },
     {
       exercise_id: 27,
@@ -612,8 +586,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "Wall",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/27.jpg",
     },
     {
       exercise_id: 28,
@@ -633,8 +606,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "Wall",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/28.jpg",
     },
     {
       exercise_id: 29,
@@ -654,8 +626,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "Wall",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/29.jpg",
     },
     {
       exercise_id: 30,
@@ -675,8 +646,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "Wall",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/30.jpg",
     },
     {
       exercise_id: 31,
@@ -696,8 +666,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "Wall",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/31.jpg",
     },
     {
       exercise_id: 32,
@@ -717,8 +686,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "Wall",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/32.jpg",
     },
     {
       exercise_id: 33,
@@ -738,8 +706,7 @@ export const INITIAL_DATA = {
       energy_type: "Neutral",
       tools: "Wall",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/33.jpg",
     },
     {
       exercise_id: 34,
@@ -759,8 +726,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "Wall",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/34.jpg",
     },
     {
       exercise_id: 35,
@@ -780,8 +746,7 @@ export const INITIAL_DATA = {
       energy_type: "Neutral",
       tools: "Wall",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/35.jpg",
     },
     {
       exercise_id: 36,
@@ -801,8 +766,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "Wall",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/36.jpg",
     },
     {
       exercise_id: 37,
@@ -822,8 +786,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "None",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/37.jpg",
     },
     {
       exercise_id: 38,
@@ -843,8 +806,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "None",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/38.jpg",
     },
     {
       exercise_id: 39,
@@ -864,8 +826,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "None",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/39.jpg",
     },
     {
       exercise_id: 40,
@@ -885,8 +846,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "None",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/40.jpg",
     },
     {
       exercise_id: 41,
@@ -906,8 +866,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "None",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/41.jpg",
     },
     {
       exercise_id: 42,
@@ -927,8 +886,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "None",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/42.jpg",
     },
     {
       exercise_id: 43,
@@ -948,8 +906,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "None",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/43.jpg",
     },
     {
       exercise_id: 44,
@@ -969,8 +926,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "None",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/44.jpg",
     },
     {
       exercise_id: 45,
@@ -990,8 +946,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "None",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/45.jpg",
     },
     {
       exercise_id: 46,
@@ -1011,8 +966,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "None",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/46.jpg",
     },
     {
       exercise_id: 47,
@@ -1032,8 +986,7 @@ export const INITIAL_DATA = {
       energy_type: "Neutral",
       tools: "None",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/47.jpg",
     },
     {
       exercise_id: 48,
@@ -1053,8 +1006,7 @@ export const INITIAL_DATA = {
       energy_type: "Energizing",
       tools: "None",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/48.jpg",
     },
     {
       exercise_id: 49,
@@ -1074,8 +1026,7 @@ export const INITIAL_DATA = {
       energy_type: "Relaxing",
       tools: "None",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/49.jpg",
     },
     {
       exercise_id: 50,
@@ -1095,8 +1046,7 @@ export const INITIAL_DATA = {
       energy_type: "Neutral",
       tools: "None",
       video_link: "",
-      image_url:
-        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=400&h=300",
+      image_url: "/images/50.jpg",
     },
   ],
   exercise_muscles: [

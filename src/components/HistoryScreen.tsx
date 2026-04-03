@@ -8,7 +8,7 @@ export default function HistoryScreen() {
 
   const logs = useLiveQuery(() =>
     db.workout_logs.orderBy("start_time").reverse().toArray(),
-  );
+  []);
 
   const formatDate = (timestamp: number) => {
     return new Intl.DateTimeFormat("en-US", {

@@ -40,7 +40,7 @@ export default function HomeScreen({
       ).length;
       return { ...list, completions };
     });
-  });
+  }, []);
 
   const handleDelete = async (e: React.MouseEvent, listId: number) => {
     e.stopPropagation();

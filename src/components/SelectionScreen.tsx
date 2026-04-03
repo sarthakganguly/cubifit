@@ -41,12 +41,6 @@ export default function SelectionScreen({ onBack }: { onBack: () => void }) {
     }
   };
 
-  useEffect(() => {
-    checkScroll();
-    window.addEventListener("resize", checkScroll);
-    return () => window.removeEventListener("resize", checkScroll);
-  }, []);
-
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
       const scrollAmount = direction === "left" ? -266 : 266;
@@ -61,8 +55,8 @@ export default function SelectionScreen({ onBack }: { onBack: () => void }) {
   );
   const cardFontSize = useAppStore((state) => state.cardFontSize);
 
-  const muscles = useLiveQuery(() => db.muscles.toArray());
-  const tags = useLiveQuery(() => db.tags.toArray());
+  const muscles = useLiveQuery(() => db.muscles.toArray(), []);
+  const tags = useLiveQuery(() => db.tags.toArray(), []);
 
   // Query exercises
   const exercises = useLiveQuery(async () => {
@@ -132,8 +126,18 @@ export default function SelectionScreen({ onBack }: { onBack: () => void }) {
     discreetnessFilter,
     selectedMuscles,
     selectedTags,
-    t,
   ]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      checkScroll();
+    }, 100);
+    window.addEventListener("resize", checkScroll);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", checkScroll);
+    };
+  }, [exercises]);
 
   const toggleMuscle = (id: number) => {
     setSelectedMuscles((prev) =>
@@ -452,18 +456,25 @@ export default function SelectionScreen({ onBack }: { onBack: () => void }) {
                       : "bg-surface border-border shadow-sm hover:shadow-md",
                   )}
                 >
-                  {/* Video Placeholder */}
+                  {/* Media Container */}
                   <div className="w-full h-1/3 bg-border rounded-xl flex items-center justify-center relative overflow-hidden flex-shrink-0">
-                    <img
-                      src={exercise.image_url}
-                      alt={t(`exercises.${exercise.name_key}`)}
-                      className="absolute inset-0 w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="absolute inset-0 bg-black/20"></div>
-                    <span className="relative z-10 text-xs text-white font-medium px-2 py-1 bg-black/50 rounded-md text-center">
-                      Video
-                    </span>
+                    {exercise.video_link && exercise.video_link.trim() !== "" ? (
+                      <video
+                        src={exercise.video_link}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    ) : (
+                      <img
+                        src={exercise.image_url && exercise.image_url.trim() !== "" ? (exercise.image_url.startsWith('data:') ? exercise.image_url : `${exercise.image_url}?v=3`) : undefined}
+                        alt={t(`exercises.${exercise.name_key}`)}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        referrerPolicy="no-referrer"
+                      />
+                    )}
                   </div>
 
                   <div className="flex-1 flex flex-col justify-between min-h-0">

@@ -40,6 +40,8 @@ interface AppState {
   ) => void;
   setPremium: (isPremium: boolean) => void;
   logout: () => void;
+  advancedMode: boolean;
+  setAdvancedMode: (mode: boolean) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -95,6 +97,8 @@ export const useAppStore = create<AppState>()(
           user: state.user ? { ...state.user, isPremium } : null,
         })),
       logout: () => set({ user: null, queue: [], draftName: "" }),
+      advancedMode: false,
+      setAdvancedMode: (mode) => set({ advancedMode: mode }),
     }),
     {
       name: "deskfit-storage",

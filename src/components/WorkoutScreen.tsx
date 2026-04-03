@@ -38,16 +38,28 @@ export default function WorkoutScreen({
   useEffect(() => {
     let interval: number;
 
-    if (isActive && timeLeft > 0) {
+    if (isActive) {
       interval = window.setInterval(() => {
-        setTimeLeft((time) => time - 1);
+        setTimeLeft((time) => {
+          if (time <= 1) {
+            clearInterval(interval);
+            // We can't call handleNext directly here because it depends on stale state.
+            // Instead, we let the useEffect below handle the transition when timeLeft reaches 0.
+            return 0;
+          }
+          return time - 1;
+        });
       }, 1000);
-    } else if (timeLeft === 0 && isActive) {
-      handleNext();
     }
 
     return () => clearInterval(interval);
-  }, [isActive, timeLeft]);
+  }, [isActive]);
+
+  useEffect(() => {
+    if (timeLeft === 0 && isActive) {
+      handleNext();
+    }
+  }, [timeLeft, isActive]);
 
   const toggleTimer = () => {
     if (isActive) {
@@ -168,17 +180,25 @@ export default function WorkoutScreen({
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="w-full max-w-sm bg-surface rounded-3xl shadow-xl border border-border overflow-hidden"
           >
-            {/* Video Placeholder */}
-            <div className="w-full aspect-video bg-border flex items-center justify-center relative">
-              <Play
-                size={48}
-                className="text-text-secondary dark:text-text-secondary opacity-50"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
-                <span className="text-white text-sm font-medium bg-black/30 px-2 py-1 rounded backdrop-blur-sm">
-                  Video Placeholder
-                </span>
-              </div>
+            {/* Media Container */}
+            <div className="w-full aspect-video bg-border flex items-center justify-center relative overflow-hidden">
+              {currentExercise.video_link && currentExercise.video_link.trim() !== "" ? (
+                <video
+                  src={currentExercise.video_link}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              ) : (
+                <img
+                  src={currentExercise.image_url && currentExercise.image_url.trim() !== "" ? (currentExercise.image_url.startsWith('data:') ? currentExercise.image_url : `${currentExercise.image_url}?v=3`) : undefined}
+                  alt={t(`exercises.${currentExercise.name_key}`)}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              )}
             </div>
 
             <div className="p-6 text-center">
