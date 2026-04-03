@@ -4,10 +4,19 @@ import { useTranslation } from "react-i18next";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../db";
 import { useWorkoutStore, useUIStore } from "../store";
-import { Plus, Check, Search, Filter, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Plus,
+  Check,
+  Search,
+  Filter,
+  ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn, useMediaUrl } from "../lib/utils";
 
+// --- SUB-COMPONENT: Filter Panel (Keep existing) ---
 const FilterPanel = ({ filters, setFilters, muscles, t }: any) => {
   const toggleArrayFilter = (key: string, id: number) => {
     setFilters((prev: any) => ({
@@ -62,6 +71,7 @@ const FilterPanel = ({ filters, setFilters, muscles, t }: any) => {
   );
 };
 
+// --- SUB-COMPONENT: Exercise Card (Keep existing) ---
 const ExerciseCard = ({ exercise, inQueue, onAdd, onRemove, t, fontSize }: any) => {
   const imageUrl = useMediaUrl(exercise.image_url);
   const videoUrl = useMediaUrl(exercise.video_link);
@@ -100,10 +110,15 @@ const ExerciseCard = ({ exercise, inQueue, onAdd, onRemove, t, fontSize }: any) 
   );
 };
 
+// --- MAIN COMPONENT ---
 export default function SelectionScreen() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [searchTerm, setSearchTerm] = useState("");
+
+  // 1. Split state: Display text vs Search text
+  const [inputValue, setInputValue] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+
   const [showFilters, setShowFilters] = useState(false);
   
   const[filters, setFilters] = useState({
@@ -118,6 +133,15 @@ export default function SelectionScreen() {
   const { cardFontSize } = useUIStore();
 
   const muscles = useLiveQuery(() => db.muscles.toArray(),[]);
+
+  // 2. Effect to handle debouncing
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(inputValue);
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(handler);
+  }, [inputValue]);
 
   const checkScroll = () => {
     if (scrollRef.current) {
@@ -134,6 +158,7 @@ export default function SelectionScreen() {
     }
   };
 
+  // 3. useLiveQuery now depends on debouncedSearchTerm
   const exercises = useLiveQuery(async () => {
     let validIds: Set<number> | null = null;
 
@@ -142,7 +167,7 @@ export default function SelectionScreen() {
       validIds = new Set(em.map(e => e.exercise_id));
     }
 
-    const lowerTerm = searchTerm.toLowerCase();
+    const lowerTerm = debouncedSearchTerm.toLowerCase();
 
     return await db.exercises.filter((ex) => {
       if (validIds && !validIds.has(ex.exercise_id)) return false;
@@ -152,12 +177,13 @@ export default function SelectionScreen() {
       if (filters.sweat !== "All" && ex.sweat_factor !== filters.sweat) return false;
       if (filters.tools !== "All" && ex.tools !== filters.tools) return false;
       
-      if (searchTerm) {
-        return t(`exercises.${ex.name_key}`).toLowerCase().includes(lowerTerm) || t(`exercises.${ex.description_key}`).toLowerCase().includes(lowerTerm);
+      if (debouncedSearchTerm) {
+        return t(`exercises.${ex.name_key}`).toLowerCase().includes(lowerTerm) || 
+               t(`exercises.${ex.description_key}`).toLowerCase().includes(lowerTerm);
       }
       return true;
     }).toArray();
-  },[searchTerm, filters.difficulty, filters.intensity, filters.noise, filters.sweat, filters.tools, filters.muscles]);
+  },[debouncedSearchTerm, filters.difficulty, filters.intensity, filters.noise, filters.sweat, filters.tools, filters.muscles]);
 
   useEffect(() => {
     const timer = setTimeout(checkScroll, 100);
@@ -172,8 +198,14 @@ export default function SelectionScreen() {
           <ArrowLeft size={20} />
         </button>
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" size={18} />
-          <input type="text" placeholder={t("app.search")} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary outline-none transition-shadow" />
+          <Search className={cn("absolute left-3 top-1/2 -translate-y-1/2 transition-colors", inputValue !== debouncedSearchTerm ? "text-primary animate-pulse" : "text-text-secondary")} size={18} />
+          <input 
+            type="text" 
+            placeholder={t("app.search")} 
+            value={inputValue} 
+            onChange={(e) => setInputValue(e.target.value)} 
+            className="w-full pl-10 pr-4 py-2 rounded-xl border border-border bg-surface focus:ring-2 focus:ring-primary outline-none transition-shadow" 
+          />
         </div>
         <button onClick={() => setShowFilters(!showFilters)} className={cn("p-2 rounded-xl border transition-colors flex items-center justify-center", showFilters ? "bg-primary/20 border-primary/30 text-primary" : "bg-surface border-border text-text-secondary")}>
           <Filter size={20} />
