@@ -4,10 +4,42 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cubifit</title>
+    
+    <!-- THEME INITIALIZER: Prevents white flash on page load -->
+    <script>
+      (function() {
+        try {
+          const storageKey = 'cubifit-ui-storage';
+          const savedSync = localStorage.getItem(storageKey);
+          if (!savedSync) return;
+
+          const parsed = JSON.parse(savedSync);
+          const state = parsed.state;
+          if (!state) return;
+
+          const theme = state.theme || 'light';
+          const root = document.documentElement;
+
+          // 1. Apply Dark Class immediately
+          if (theme === 'dark') {
+            root.classList.add('dark');
+          }
+
+          // 2. Apply Custom Colors immediately
+          const customColors = state.customColors && state.customColors[theme];
+          if (customColors) {
+            Object.entries(customColors).forEach(([key, value]) => {
+              root.style.setProperty(key, value);
+            });
+          }
+        } catch (e) {
+          console.error('Theme initialization failed', e);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
