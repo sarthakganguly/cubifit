@@ -38,7 +38,7 @@ export default function AuthScreen() {
       } else {
         setError("Invalid username or password");
       }
-    } catch (err) { setError("Sign in error"); }
+    } catch (err: any) { setError(err.message || "Sign in error"); }
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -56,7 +56,7 @@ export default function AuthScreen() {
       await db.users.add({ username, password: hashedPassword, passkey: newPasskey, created_at: Date.now(), is_premium: false });
       setGeneratedPasskey(newPasskey);
       setMode("passkey");
-    } catch (err) { setError("Signup error"); }
+    } catch (err: any) { setError(err.message || "Signup error"); }
   };
 
   const inputClasses = "w-full bg-surface border border-border rounded-xl px-11 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all";
