@@ -110,6 +110,34 @@ The app uses a decoupled state architecture. Navigation is handled via a real UR
 
 * * * * *
 
+🗺️ Mobile Roadmap (iOS & Android)
+---------------------------------
+
+To evolve Cubifit from a web-first experience to a production-grade native application, we follow this technical roadmap.
+
+### 🏗️ Phase 1: Native Foundation (Capacitor)
+- [ ] **Capacitor Integration**: Initialize `@capacitor/core` and `@capacitor/cli`.
+- [ ] **Platform Setup**: Add iOS and Android native projects.
+- [ ] **App Assets**: Generate splash screens and adaptive icons using `@capacitor/assets`.
+
+### 💾 Phase 2: Native Persistence & Performance
+- [ ] **SQLite Adapter**: Swap IndexedDB for the **Capacitor SQLite Plugin** to ensure data persistence during OS cache purges.
+- [ ] **Simplified Media Handling**: Optimize for **image-only** card assets (no video support in initial mobile release).
+- [ ] **Filesystem API**: Store user-uploaded exercise images directly in the native filesystem to keep memory usage lean.
+
+### ⚡ Phase 3: Hardware & OS Integration
+- [ ] **Background Timer Logic**: Implement native **Local Notifications** and background tasks to keep workouts active when the phone is locked.
+- [ ] **Haptic Feedback**: Integrate `@capacitor/haptics` for physical "taps" during timer starts and completions.
+- [ ] **Keep Screen On**: Use the **Insomnia/Keep-Aware** plugin to prevent the device from sleeping during a workout.
+- [ ] **Biometric Auth**: Add FaceID/TouchID support for seamless local login.
+
+### 🎨 Phase 4: Native UI/UX Polish
+- [ ] **Safe Area Management**: Update CSS/Tailwind to handle device "Notches" and "Home Indicators" using `safe-area-inset`.
+- [ ] **Back-Button Support**: Handle hardware back-button logic for Android to prevent accidental navigation.
+- [ ] **Live Updates**: Configure a deployment pipeline for pushing UI fixes instantly via over-the-air updates.
+
+* * * * *
+
 📄 License
 ----------
 
