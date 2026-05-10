@@ -6,6 +6,10 @@ import { Play, Pause, X, CheckCircle2, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useMediaUrl } from "../lib/utils";
 import { db } from "../db";
+import { Capacitor } from "@capacitor/core";
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
+import { LocalNotifications } from "@capacitor/local-notifications";
+import { KeepAwake } from "@capacitor-community/keep-awake";
 
 // --- Isolated Timer Component ---
 // Manages its own interval so the parent screen doesn't re-render 10x a second
@@ -13,9 +17,43 @@ const TimerRing = ({ isActive, initialDuration, onComplete, t }: { isActive: boo
   const [timeLeft, setTimeLeft] = useState(initialDuration);
   const expectedEndTimeRef = useRef<number | null>(null);
 
+  const scheduleNotification = async (seconds: number) => {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const perm = await LocalNotifications.requestPermissions();
+        if (perm.display === "granted") {
+          await LocalNotifications.schedule({
+            notifications: [
+              {
+                title: "Exercise Complete!",
+                body: "Time for the next move.",
+                id: 1,
+                schedule: { at: new Date(Date.now() + seconds * 1000) },
+                sound: "beep.wav",
+              },
+            ],
+          });
+        }
+      } catch (e) {
+        console.error("Notification schedule failed", e);
+      }
+    }
+  };
+
+  const cancelNotifications = async () => {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        await LocalNotifications.cancel({ notifications: [{ id: 1 }] });
+      } catch (e) {
+        console.error("Notification cancel failed", e);
+      }
+    }
+  };
+
   useEffect(() => {
     if (isActive) {
       expectedEndTimeRef.current = Date.now() + timeLeft * 1000;
+      scheduleNotification(timeLeft);
       
       const interval = setInterval(() => {
         if (!expectedEndTimeRef.current) return;
@@ -23,15 +61,22 @@ const TimerRing = ({ isActive, initialDuration, onComplete, t }: { isActive: boo
         
         if (remaining <= 0) {
           setTimeLeft(0);
-          onComplete(); // Fire completion callback
+          if (Capacitor.isNativePlatform()) {
+            Haptics.impact({ style: ImpactStyle.Heavy });
+          }
+          onComplete(); 
         } else {
           setTimeLeft(remaining);
         }
       }, 100);
       
-      return () => clearInterval(interval);
+      return () => {
+        clearInterval(interval);
+        cancelNotifications();
+      };
     } else {
       expectedEndTimeRef.current = null;
+      cancelNotifications();
     }
   }, [isActive, timeLeft, onComplete]);
 
@@ -74,6 +119,18 @@ export default function WorkoutScreen() {
   const [startTime] = useState(Date.now());
   const [totalPauseTime, setTotalPauseTime] = useState(0);
   const pauseStartTimeRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    // Keep the screen on during the workout
+    if (Capacitor.isNativePlatform()) {
+      KeepAwake.keepAwake().catch(console.error);
+    }
+    return () => {
+      if (Capacitor.isNativePlatform()) {
+        KeepAwake.allowSleep().catch(console.error);
+      }
+    };
+  }, []);
 
   const toggleTimer = () => {
     if (isActive) {

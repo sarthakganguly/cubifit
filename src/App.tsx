@@ -4,6 +4,8 @@ import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-
 import { useUIStore, useWorkoutStore, useAuthStore } from "./store";
 import { Home, List, Play, History, Settings, LogOut } from "lucide-react";
 import { cn } from "./lib/utils";
+import { Capacitor } from "@capacitor/core";
+import { App as CapApp } from "@capacitor/app";
 
 import SelectionScreen from "./components/SelectionScreen";
 import QueueScreen from "./components/QueueScreen";
@@ -25,6 +27,22 @@ export default function App() {
   
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    // Handle Android Back Button
+    if (Capacitor.isNativePlatform()) {
+      const backListener = CapApp.addListener("backButton", (data) => {
+        if (location.pathname === "/") {
+          CapApp.exitApp();
+        } else {
+          navigate(-1);
+        }
+      });
+      return () => {
+        backListener.then(l => l.remove());
+      };
+    }
+  }, [location.pathname, navigate]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -70,44 +88,46 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background text-text-primary flex flex-col font-sans transition-colors duration-200">
-      <header className="bg-surface shadow-sm px-4 flex justify-between items-center sticky top-0 z-10 h-16">
-        <div className="flex items-center">
-          <button
-            onClick={() => {
-              logout();
-              navigate("/");
-            }}
-            className="flex items-center gap-2 px-3 py-1.5 bg-error/10 text-error border border-error/20 rounded-lg hover:bg-error hover:text-white transition-all text-sm font-semibold shadow-sm active:scale-95"
-          >
-            <LogOut size={16} />
-            <span className="hidden sm:inline">Logout</span>
-          </button>
-        </div>
-        <div className="flex items-center gap-3 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          <img
-            src="https://picsum.photos/seed/cubefit/64/64"
-            alt="CubeFit Logo"
-            className="w-9 h-9 rounded-lg shadow-sm"
-            referrerPolicy="no-referrer"
-          />
-          <h1 className="text-xl font-bold text-primary">{t("app.title")}</h1>
-        </div>
-        <div className="w-10 flex justify-end">
-          {queue.length > 0 && !isWorkoutActive && (
+      <header className="bg-surface shadow-sm px-4 flex justify-between items-center sticky top-0 z-10 h-auto min-h-[4rem] pt-safe">
+        <div className="flex items-center h-16 w-full relative">
+          <div className="flex items-center">
             <button
-              onClick={() => navigate("/queue")}
-              className="relative p-2 text-text-secondary hover:text-primary transition-colors"
+              onClick={() => {
+                logout();
+                navigate("/");
+              }}
+              className="flex items-center gap-2 px-3 py-1.5 bg-error/10 text-error border border-error/20 rounded-lg hover:bg-error hover:text-white transition-all text-sm font-semibold shadow-sm active:scale-95"
             >
-              <List size={24} />
-              <span className="absolute top-0 right-0 bg-error text-white text-xs rounded-full h-5 w-5 flex items-center justify-center transform translate-x-1/4 -translate-y-1/4">
-                {queue.length}
-              </span>
+              <LogOut size={16} />
+              <span className="hidden sm:inline">Logout</span>
             </button>
-          )}
+          </div>
+          <div className="flex items-center gap-3 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <img
+              src="https://picsum.photos/seed/cubefit/64/64"
+              alt="CubeFit Logo"
+              className="w-9 h-9 rounded-lg shadow-sm"
+              referrerPolicy="no-referrer"
+            />
+            <h1 className="text-xl font-bold text-primary">{t("app.title")}</h1>
+          </div>
+          <div className="w-10 flex justify-end ml-auto">
+            {queue.length > 0 && !isWorkoutActive && (
+              <button
+                onClick={() => navigate("/queue")}
+                className="relative p-2 text-text-secondary hover:text-primary transition-colors"
+              >
+                <List size={24} />
+                <span className="absolute top-0 right-0 bg-error text-white text-xs rounded-full h-5 w-5 flex items-center justify-center transform translate-x-1/4 -translate-y-1/4">
+                  {queue.length}
+                </span>
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto p-4 max-w-3xl mx-auto w-full flex flex-col">
+      <main className="flex-1 overflow-y-auto p-4 max-w-3xl mx-auto w-full flex flex-col px-safe">
         <Routes>
           <Route path="/" element={<HomeScreen />} />
           <Route path="/library" element={<SelectionScreen />} />
@@ -123,7 +143,7 @@ export default function App() {
       </main>
 
       {!isWorkoutActive && (
-        <nav className="bg-surface border-t border-border flex justify-around p-3 pb-6 sticky bottom-0 z-10">
+        <nav className="bg-surface border-t border-border flex justify-around p-3 pb-6 sticky bottom-0 z-10 pb-safe">
           <NavItem
             icon={<Home />}
             label="Home"

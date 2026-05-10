@@ -135,16 +135,15 @@ To evolve Cubifit from a web-first experience to a production-grade native appli
 - [ ] **Filesystem API**: Store user-uploaded exercise images directly in the native filesystem to keep memory usage lean.
 
 ### ⚡ Phase 3: Hardware & OS Integration
-- [ ] **Background Timer Logic**: Implement native **Local Notifications** and background tasks.
-    - *Risk Mitigation*: Mobile OSs throttle/kill JavaScript timers when the screen locks; native services are required for timer accuracy.
-- [ ] **Haptic Feedback**: Integrate `@capacitor/haptics` for physical "taps" during timer starts and completions.
-- [ ] **Keep Screen On**: Use the **Insomnia/Keep-Aware** plugin to prevent the device from sleeping during a workout.
+- [x] **Background Timer Logic**: Implemented native **Local Notifications** to mitigate background timer throttling.
+- [x] **Haptic Feedback**: Integrated physical vibrations for interval completion.
+- [x] **Keep Screen On**: Integrated `@capacitor-community/keep-awake` to prevent sleep during workouts.
 - [ ] **Biometric Auth**: Add FaceID/TouchID support for seamless local login.
 
 ### 🎨 Phase 4: Native UI/UX Polish
-- [ ] **Safe Area Management**: Update CSS/Tailwind to handle device "Notches" and "Home Indicators" using `safe-area-inset`.
-- [ ] **Back-Button Support**: Handle hardware back-button logic for Android to prevent accidental navigation.
-- [ ] **Live Updates**: Configure a deployment pipeline for pushing UI fixes instantly via over-the-air updates.
+- [x] **Safe Area Management**: Updated CSS and layout to handle device "Notches" and "Home Indicators" using `safe-area-inset`.
+- [x] **Back-Button Support**: Implemented hardware back-button logic for Android using `@capacitor/app`.
+- [ ] **Live Updates**: Future improvement: Configure a deployment pipeline for pushing UI fixes instantly via over-the-air updates.
 
 * * * * *
 

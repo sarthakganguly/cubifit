@@ -8,6 +8,8 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, horizontalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { db } from "../db";
+import { sqliteService } from "../lib/sqlite";
+import { Capacitor } from "@capacitor/core";
 
 function SortableExerciseItem({ queueItem, onRemove }: { queueItem: QueueItem; onRemove: () => void }) {
   const { t } = useTranslation();
@@ -74,12 +76,56 @@ export default function QueueScreen() {
   };
 
   const handleSave = async () => {
-    if (!draftName.trim() || queue.length === 0) return;
+    if (queue.length === 0) return;
     setIsSaving(true);
-    const listId = await db.workout_lists.add({ list_name: draftName, created_at: Date.now(), is_draft: false, total_duration: queue.reduce((acc, q) => acc + q.exercise.duration_sec, 0), exercise_count: queue.length });
-    await db.workout_list_exercises.bulkAdd(queue.map((q, i) => ({ list_id: listId as number, exercise_id: q.exercise.exercise_id, position: i })));
-    setIsSaving(false);
-    navigate("/");
+    
+    // Ensure we have a name, fallback to a timestamped default
+    const finalName = draftName.trim() || `Workout ${new Date().toLocaleDateString()}`;
+    
+    try {
+      const listId = await db.workout_lists.add({ 
+        list_name: finalName, 
+        created_at: Date.now(), 
+        is_draft: false, 
+        total_duration: queue.reduce((acc, q) => acc + q.exercise.duration_sec, 0), 
+        exercise_count: queue.length 
+      });
+
+      await db.workout_list_exercises.bulkAdd(queue.map((q, i) => ({ 
+        list_id: listId as number, 
+        exercise_id: q.exercise.exercise_id, 
+        position: i 
+      })));
+
+      // PHASE 2: Mirror to SQLite if on native
+      if (Capacitor.isNativePlatform()) {
+        try {
+          const sqlite = sqliteService.getDatabase();
+          // Save list metadata
+          await sqlite.run(
+            `INSERT INTO workout_lists (list_id, list_name, created_at, is_draft, total_duration, exercise_count) VALUES (?, ?, ?, ?, ?, ?)`,
+            [listId, finalName, Date.now(), 0, queue.reduce((acc, q) => acc + q.exercise.duration_sec, 0), queue.length]
+          );
+          // Save list exercises
+          for (let i = 0; i < queue.length; i++) {
+            await sqlite.run(
+              `INSERT INTO workout_list_exercises (list_id, exercise_id, position) VALUES (?, ?, ?)`,
+              [listId, queue[i].exercise.exercise_id, i]
+            );
+          }
+        } catch (sqle) {
+          console.error("SQLite mirror failed", sqle);
+        }
+      }
+
+      alert(t("app.save") + " " + t("app.workout_complete") || "Workout Saved!");
+      navigate("/");
+    } catch (e) {
+      console.error("Save failed", e);
+      alert("Save failed. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
