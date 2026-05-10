@@ -1,5 +1,7 @@
 import Dexie, { Table } from "dexie";
 import { INITIAL_DATA } from "./initialData";
+import { sqliteService } from "./lib/sqlite";
+import { Capacitor } from "@capacitor/core";
 
 export interface Exercise {
   exercise_id: number;
@@ -92,14 +94,141 @@ export class MyDatabase extends Dexie {
 export const db = new (MyDatabase as any)();
 
 /**
+ * PHASE 2: SQLite SYNC LOGIC
+ * This ensures data is saved to native SQLite to prevent iOS/Android storage eviction.
+ */
+async function syncToSQLite() {
+  const sqlite = sqliteService.getDatabase();
+  
+  // Sync static tables
+  const exercises = await db.exercises.toArray();
+  for (const ex of exercises) {
+    // We convert Blobs to strings/placeholders for SQLite for now as per Roadmap (Phase 2: image-only/simplified)
+    await sqlite.run(`INSERT OR REPLACE INTO exercises 
+      (exercise_id, name_key, description_key, duration_sec, objective_id, difficulty, intensity, noise_level, sweat_factor, is_clothing_safe, posture_benefit, injury_risk, discreetness, time_to_start, energy_type, tools, video_link, image_url) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        ex.exercise_id, ex.name_key, ex.description_key, ex.duration_sec, ex.objective_id, 
+        ex.difficulty, ex.intensity, ex.noise_level, ex.sweat_factor, ex.is_clothing_safe ? 1 : 0,
+        ex.posture_benefit, ex.injury_risk, ex.discreetness, ex.time_to_start, ex.energy_type, 
+        ex.tools, typeof ex.video_link === "string" ? ex.video_link : "[BLOB]", 
+        typeof ex.image_url === "string" ? ex.image_url : "[BLOB]"
+      ]
+    );
+  }
+
+  // Sync users, logs, etc.
+  const users = await db.users.toArray();
+  for (const u of users) {
+    await sqlite.run(`INSERT OR REPLACE INTO users (id, username, password, passkey, created_at, is_premium, license_key) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [u.id, u.username, u.password, u.passkey, u.created_at, u.is_premium ? 1 : 0, u.license_key]
+    );
+  }
+
+  const lists = await db.workout_lists.toArray();
+  for (const l of lists) {
+    await sqlite.run(`INSERT OR REPLACE INTO workout_lists (list_id, list_name, created_at, is_draft, total_duration, exercise_count) VALUES (?, ?, ?, ?, ?, ?)`,
+      [l.list_id, l.list_name, l.created_at, l.is_draft ? 1 : 0, l.total_duration || 0, l.exercise_count || 0]
+    );
+  }
+
+  const logs = await db.workout_logs.toArray();
+  for (const log of logs) {
+    await sqlite.run(`INSERT OR REPLACE INTO workout_logs (log_id, list_name, total_duration, start_time, end_time, pause_duration) VALUES (?, ?, ?, ?, ?, ?)`,
+      [log.log_id, log.list_name, log.total_duration, log.start_time, log.end_time, log.pause_duration]
+    );
+  }
+
+  // Sync Metadata
+  const meta = await db.metadata.toArray();
+  for (const m of meta) {
+    await sqlite.run(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, [m.key, m.value.toString()]);
+  }
+
+  await sqliteService.saveWebStore();
+}
+
+/**
+ * PHASE 2: SQLite RESTORE LOGIC
+ */
+async function restoreFromSQLite() {
+  const sqlite = sqliteService.getDatabase();
+  
+  // 1. Restore Exercises
+  const resEx = await sqlite.query("SELECT * FROM exercises");
+  if (resEx.values) {
+    await db.exercises.bulkPut(resEx.values.map(ex => ({
+      ...ex,
+      is_clothing_safe: !!ex.is_clothing_safe
+    })));
+  }
+
+  // 2. Restore Users
+  const resUsers = await sqlite.query("SELECT * FROM users");
+  if (resUsers.values) {
+    await db.users.bulkPut(resUsers.values.map(u => ({
+      ...u,
+      is_premium: !!u.is_premium
+    })));
+  }
+
+  // 3. Restore Lists
+  const resLists = await sqlite.query("SELECT * FROM workout_lists");
+  if (resLists.values) {
+    await db.workout_lists.bulkPut(resLists.values.map(l => ({
+      ...l,
+      is_draft: !!l.is_draft
+    })));
+  }
+
+  // 4. Restore Logs
+  const resLogs = await sqlite.query("SELECT * FROM workout_logs");
+  if (resLogs.values) {
+    await db.workout_logs.bulkPut(resLogs.values);
+  }
+
+  // 5. Restore static mappings
+  const resMuscles = await sqlite.query("SELECT * FROM muscles");
+  if (resMuscles.values) await db.muscles.bulkPut(resMuscles.values);
+  
+  const resObjectives = await sqlite.query("SELECT * FROM objectives");
+  if (resObjectives.values) await db.objectives.bulkPut(resObjectives.values);
+
+  const resTags = await sqlite.query("SELECT * FROM tags");
+  if (resTags.values) await db.tags.bulkPut(resTags.values);
+
+  const resEM = await sqlite.query("SELECT * FROM exercise_muscles");
+  if (resEM.values) await db.exercise_muscles.bulkPut(resEM.values);
+
+  const resET = await sqlite.query("SELECT * FROM exercise_tags");
+  if (resET.values) await db.exercise_tags.bulkPut(resET.values);
+
+  // 6. Restore Metadata to prevent re-sync
+  const resMeta = await sqlite.query("SELECT * FROM metadata WHERE key = 'data_pack_version'");
+  if (resMeta.values && resMeta.values.length > 0) {
+    await db.metadata.put({ key: "data_pack_version", value: parseInt(resMeta.values[0].value) });
+  }
+}
+
+/**
  * PRODUCTION-GRADE INITIALIZATION
  * 1. Checks if the app data (exercises) is out of sync with the code.
  * 2. Uses "Put" instead of "Add" to update existing exercises (fixing typos).
  * 3. Protects user-customized media (don't overwrite Blobs with default strings).
  */
 export async function initializeDatabase() {
-  const DATA_VERSION = 1; // Increment this when you change INITIAL_DATA.ts contents
-  
+  const isWeb = Capacitor.getPlatform() === "web";
+
+  // 1. Initialize SQLite ONLY on native platforms to avoid browser WASM bugs
+  if (!isWeb) {
+    try {
+      await sqliteService.initialize();
+    } catch (e) {
+      console.warn("SQLite Native Init failed, falling back to IndexedDB only", e);
+    }
+  }
+
+  const DATA_VERSION = 1;
   const meta = await db.metadata.get("data_pack_version");
 
   if (!meta || meta.value < DATA_VERSION) {
@@ -118,20 +247,16 @@ export async function initializeDatabase() {
       await db.exercise_tags.bulkPut(INITIAL_DATA.exercise_tags);
 
       // 2. Smart Sync Exercises
-      // We don't use bulkPut for exercises because we want to preserve user-uploaded media
       for (const exercise of INITIAL_DATA.exercises) {
         const existing = await db.exercises.get(exercise.exercise_id);
         
         if (existing) {
-          // If the existing item has a Blob, it means the user customized it.
-          // We update text fields but keep the custom media.
           const updateData = { ...exercise };
           if (existing.image_url instanceof Blob) delete (updateData as any).image_url;
           if (existing.video_link instanceof Blob) delete (updateData as any).video_link;
           
           await db.exercises.update(exercise.exercise_id, updateData);
         } else {
-          // New exercise added to the code, not in user's DB yet
           await db.exercises.add(exercise);
         }
       }
@@ -140,6 +265,20 @@ export async function initializeDatabase() {
       await db.metadata.put({ key: "data_pack_version", value: DATA_VERSION });
     });
     
+    // 4. Perform Phase 2 Sync to SQLite only if it's available
+    if (!isWeb) {
+      await syncToSQLite().catch(e => console.error("Background SQLite sync failed", e));
+    }
+    
     console.log("Database Sync: Complete");
+  } else {
+    // Restoration only applies to native where SQLite is active
+    if (!isWeb) {
+      const exerciseCount = await db.exercises.count();
+      if (exerciseCount === 0) {
+        console.warn("IndexedDB was likely cleared. Restoring from SQLite...");
+        await restoreFromSQLite().catch(e => console.error("Restoration failed", e));
+      }
+    }
   }
 }
