@@ -12,6 +12,7 @@ import {
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
+  List,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn, useMediaUrl } from "../lib/utils";
@@ -239,6 +240,24 @@ export default function SelectionScreen() {
             ))
           )}
         </div>
+
+        {queue.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex justify-center pb-4"
+          >
+            <button
+              onClick={() => navigate("/queue")}
+              className="flex items-center gap-2 bg-primary text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
+            >
+              <List size={20} />
+              <span>
+                {t("app.queue")} ({queue.length})
+              </span>
+            </button>
+          </motion.div>
+        )}
       </div>
     </div>
   );
