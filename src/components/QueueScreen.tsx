@@ -7,7 +7,7 @@ import { cn, useMediaUrl } from "../lib/utils";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, horizontalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { db } from "../db";
+import { db, mirrorToSQLite } from "../db";
 import { sqliteService } from "../lib/sqlite";
 import { Capacitor } from "@capacitor/core";
 
@@ -97,25 +97,22 @@ export default function QueueScreen() {
         position: i 
       })));
 
-      // PHASE 2: Mirror to SQLite if on native
-      if (Capacitor.isNativePlatform()) {
-        try {
-          const sqlite = sqliteService.getDatabase();
-          // Save list metadata
-          await sqlite.run(
-            `INSERT INTO workout_lists (list_id, list_name, created_at, is_draft, total_duration, exercise_count) VALUES (?, ?, ?, ?, ?, ?)`,
-            [listId, finalName, Date.now(), 0, queue.reduce((acc, q) => acc + q.exercise.duration_sec, 0), queue.length]
-          );
-          // Save list exercises
-          for (let i = 0; i < queue.length; i++) {
-            await sqlite.run(
-              `INSERT INTO workout_list_exercises (list_id, exercise_id, position) VALUES (?, ?, ?)`,
-              [listId, queue[i].exercise.exercise_id, i]
-            );
-          }
-        } catch (sqle) {
-          console.error("SQLite mirror failed", sqle);
-        }
+      // PHASE 2: Mirror to SQLite using centralized utility
+      await mirrorToSQLite("workout_lists", { 
+        list_id: listId, 
+        list_name: finalName, 
+        created_at: Date.now(), 
+        is_draft: 0, 
+        total_duration: queue.reduce((acc, q) => acc + q.exercise.duration_sec, 0), 
+        exercise_count: queue.length 
+      });
+
+      for (let i = 0; i < queue.length; i++) {
+        await mirrorToSQLite("workout_list_exercises", { 
+          list_id: listId, 
+          exercise_id: queue[i].exercise.exercise_id, 
+          position: i 
+        });
       }
 
       alert(t("app.save") + " " + t("app.workout_complete") || "Workout Saved!");

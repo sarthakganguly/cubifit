@@ -92,60 +92,72 @@ export class MyDatabase extends Dexie {
 }
 
 export const db = new (MyDatabase as any)();
-
 /**
  * PHASE 2: SQLite SYNC LOGIC
  * This ensures data is saved to native SQLite to prevent iOS/Android storage eviction.
  */
-async function syncToSQLite() {
-  const sqlite = sqliteService.getDatabase();
-  
-  // Sync static tables
-  const exercises = await db.exercises.toArray();
-  for (const ex of exercises) {
-    // We convert Blobs to strings/placeholders for SQLite for now as per Roadmap (Phase 2: image-only/simplified)
-    await sqlite.run(`INSERT OR REPLACE INTO exercises 
-      (exercise_id, name_key, description_key, duration_sec, objective_id, difficulty, intensity, noise_level, sweat_factor, is_clothing_safe, posture_benefit, injury_risk, discreetness, time_to_start, energy_type, tools, video_link, image_url) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        ex.exercise_id, ex.name_key, ex.description_key, ex.duration_sec, ex.objective_id, 
-        ex.difficulty, ex.intensity, ex.noise_level, ex.sweat_factor, ex.is_clothing_safe ? 1 : 0,
-        ex.posture_benefit, ex.injury_risk, ex.discreetness, ex.time_to_start, ex.energy_type, 
-        ex.tools, typeof ex.video_link === "string" ? ex.video_link : "[BLOB]", 
-        typeof ex.image_url === "string" ? ex.image_url : "[BLOB]"
-      ]
-    );
-  }
+export async function mirrorToSQLite(tableName: string, data: any | any[]) {
+  if (Capacitor.getPlatform() === "web") return;
 
-  // Sync users, logs, etc.
-  const users = await db.users.toArray();
-  for (const u of users) {
-    await sqlite.run(`INSERT OR REPLACE INTO users (id, username, password, passkey, created_at, is_premium, license_key) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [u.id, u.username, u.password, u.passkey, u.created_at, u.is_premium ? 1 : 0, u.license_key]
-    );
+  try {
+    const sqlite = sqliteService.getDatabase();
+    const items = Array.isArray(data) ? data : [data];
+
+    for (const item of items) {
+      const keys = Object.keys(item);
+      const placeholders = keys.map(() => "?").join(", ");
+      const columns = keys.join(", ");
+
+      // Clean up values: convert booleans to 1/0 and handle Blobs
+      const values = keys.map(k => {
+        const val = item[k];
+        if (typeof val === "boolean") return val ? 1 : 0;
+        if (val instanceof Blob) return "[BLOB]";
+        return val ?? null;
+      });
+
+      await sqlite.run(
+        `INSERT OR REPLACE INTO ${tableName} (${columns}) VALUES (${placeholders})`,
+        values
+      );
+    }
+    await sqliteService.saveWebStore();
+  } catch (e) {
+    console.error(`SQLite mirror failed for table ${tableName}`, e);
   }
+}
+
+async function syncToSQLite() {
+  // Sync all primary tables using the centralized mirroring utility
+  const exercises = await db.exercises.toArray();
+  await mirrorToSQLite("exercises", exercises);
+
+  const users = await db.users.toArray();
+  await mirrorToSQLite("users", users);
 
   const lists = await db.workout_lists.toArray();
-  for (const l of lists) {
-    await sqlite.run(`INSERT OR REPLACE INTO workout_lists (list_id, list_name, created_at, is_draft, total_duration, exercise_count) VALUES (?, ?, ?, ?, ?, ?)`,
-      [l.list_id, l.list_name, l.created_at, l.is_draft ? 1 : 0, l.total_duration || 0, l.exercise_count || 0]
-    );
-  }
+  await mirrorToSQLite("workout_lists", lists);
 
   const logs = await db.workout_logs.toArray();
-  for (const log of logs) {
-    await sqlite.run(`INSERT OR REPLACE INTO workout_logs (log_id, list_name, total_duration, start_time, end_time, pause_duration) VALUES (?, ?, ?, ?, ?, ?)`,
-      [log.log_id, log.list_name, log.total_duration, log.start_time, log.end_time, log.pause_duration]
-    );
-  }
+  await mirrorToSQLite("workout_logs", logs);
 
-  // Sync Metadata
+  const muscles = await db.muscles.toArray();
+  await mirrorToSQLite("muscles", muscles);
+
+  const objectives = await db.objectives.toArray();
+  await mirrorToSQLite("objectives", objectives);
+
+  const tags = await db.tags.toArray();
+  await mirrorToSQLite("tags", tags);
+
+  const exMuscles = await db.exercise_muscles.toArray();
+  await mirrorToSQLite("exercise_muscles", exMuscles);
+
+  const exTags = await db.exercise_tags.toArray();
+  await mirrorToSQLite("exercise_tags", exTags);
+
   const meta = await db.metadata.toArray();
-  for (const m of meta) {
-    await sqlite.run(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, [m.key, m.value.toString()]);
-  }
-
-  await sqliteService.saveWebStore();
+  await mirrorToSQLite("metadata", meta);
 }
 
 /**

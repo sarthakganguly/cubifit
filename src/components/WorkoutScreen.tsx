@@ -5,7 +5,7 @@ import { useWorkoutStore } from "../store";
 import { Play, Pause, X, CheckCircle2, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { useMediaUrl } from "../lib/utils";
-import { db } from "../db";
+import { db, mirrorToSQLite } from "../db";
 import { Capacitor } from "@capacitor/core";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
 import { LocalNotifications } from "@capacitor/local-notifications";
@@ -13,7 +13,7 @@ import { KeepAwake } from "@capacitor-community/keep-awake";
 
 // --- Isolated Timer Component ---
 // Manages its own interval so the parent screen doesn't re-render 10x a second
-const TimerRing = ({ isActive, initialDuration, onComplete, t }: { isActive: boolean, initialDuration: number, onComplete: () => void, t: any }) => {
+const TimerRing = ({ isActive, initialDuration, onComplete, t }: { isActive: boolean, initialDuration: number, onComplete: () => void, t: (key: string) => string }) => {
   const [timeLeft, setTimeLeft] = useState(initialDuration);
   const expectedEndTimeRef = useRef<number | null>(null);
 
@@ -157,14 +157,30 @@ export default function WorkoutScreen() {
   const finishWorkout = async () => {
     setIsActive(false);
     setIsFinished(true);
+
+    // RIGOROUS CLEANUP: Cancel any pending notifications immediately
+    if (Capacitor.isNativePlatform()) {
+      try {
+        await LocalNotifications.cancel({ notifications: [{ id: 1 }] });
+      } catch (e) {
+        console.error("Cleanup cancel failed", e);
+      }
+    }
+
     try {
-      await db.workout_logs.add({
+      const logEntry = {
         list_name: "Custom Workout",
         start_time: startTime,
         end_time: Date.now(),
         total_duration: Date.now() - startTime,
         pause_duration: totalPauseTime,
-      });
+      };
+
+      const logId = await db.workout_logs.add(logEntry);
+      
+      // Mirror to SQLite
+      await mirrorToSQLite("workout_logs", { log_id: logId, ...logEntry });
+
     } catch (e) {
       console.error(e);
     }

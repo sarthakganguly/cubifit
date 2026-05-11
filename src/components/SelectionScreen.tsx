@@ -16,9 +16,24 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn, useMediaUrl } from "../lib/utils";
+import { Exercise } from "../db";
+
+interface FilterPanelProps {
+  filters: {
+    difficulty: string;
+    intensity: string;
+    noise: string;
+    sweat: string;
+    tools: string;
+    muscles: number[];
+  };
+  setFilters: React.Dispatch<React.SetStateAction<any>>;
+  muscles: { muscle_id: number; name_key: string }[] | undefined;
+  t: (key: string) => string;
+}
 
 // --- SUB-COMPONENT: Filter Panel (Keep existing) ---
-const FilterPanel = ({ filters, setFilters, muscles, t }: any) => {
+const FilterPanel = ({ filters, setFilters, muscles, t }: FilterPanelProps) => {
   const toggleArrayFilter = (key: string, id: number) => {
     setFilters((prev: any) => ({
       ...prev,
@@ -73,7 +88,16 @@ const FilterPanel = ({ filters, setFilters, muscles, t }: any) => {
 };
 
 // --- SUB-COMPONENT: Exercise Card (Keep existing) ---
-const ExerciseCard = ({ exercise, inQueue, onAdd, onRemove, t, fontSize }: any) => {
+interface ExerciseCardProps {
+  exercise: Exercise;
+  inQueue: boolean;
+  onAdd: (ex: Exercise) => void;
+  onRemove: (id: number) => void;
+  t: any;
+  fontSize: string;
+}
+
+const ExerciseCard = ({ exercise, inQueue, onAdd, onRemove, t, fontSize }: ExerciseCardProps) => {
   const imageUrl = useMediaUrl(exercise.image_url);
   const videoUrl = useMediaUrl(exercise.video_link);
 
